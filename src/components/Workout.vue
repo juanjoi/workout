@@ -2,29 +2,33 @@
   <div class="workout">
     <div v-if="progress.started">
       <div class="breadcrumbs">
-        <div>
-          <p>Time</p>
-          <p>{{ formatTime(Math.floor(progress.time / 1000)) }} / {{ formatTime(totalTime) }}</p>
+        <div class="time">
+          <v-icon icon="mdi-clock"></v-icon> {{ formatTime(Math.floor(progress.time / 1000)) }} / {{ formatTime(totalTime)
+          }}
         </div>
         <div>
-          <p>Block</p>
-          <p>{{ progress.block + 1 }} / {{ workout.blocks.length }}</p>
-        </div>
-        <div>
-          <p>Repetition</p>
-          <p>{{ progress.repetition + 1 }} / {{ workout.blocks[progress.block].repetitions }}</p>
-        </div>
-        <div>
-          <p>Exercise</p>
-          <p>{{ currentExercise }} / {{ workout.blocks[progress.block].steps.filter(step => step.type ===
-            'exercise').length
-          }}</p>
+          <div>
+            <v-progress-linear class="counter" :model-value="currentBlockPCT" color="#cccccc" height="30">
+              {{ progress.block + 1 }} / {{
+                workout.blocks.length }}<v-icon icon="mdi-code-braces"></v-icon></v-progress-linear>
+          </div>
+          <div>
+            <v-progress-linear class="counter" :model-value="currentRepetitionPCT" color="#cccccc" height="30">
+              {{ progress.repetition + 1 }} / {{
+                workout.blocks[progress.block].repetitions }}<v-icon icon="mdi-repeat"></v-icon></v-progress-linear>
+          </div>
+          <div>
+            <v-progress-linear class="counter" :model-value="currentExercisePCT" color="#cccccc" height="30">
+              {{ currentExercise }} / {{
+                workout.blocks[progress.block].steps.filter(step => step.type === 'exercise').length
+              }}<v-icon icon="mdi-dumbbell"></v-icon></v-progress-linear>
+          </div>
         </div>
       </div>
       <timer class="timer" :timer='timer' @ring="onTimerRing()"></timer>
     </div>
     <div v-if="!progress.started">
-      <button @click="start">Start Workout</button>
+      <v-btn @click="start" icon="mdi-play" size="x-large"></v-btn>
     </div>
   </div>
 </template>
@@ -81,7 +85,17 @@ export default class Workout extends Vue {
   startProgress!: () => void;
   clearProgress!: () => void;
   updateProgressTime!: () => void;
-  
+
+
+  get currentBlockPCT() {
+    return (this.progress.block + 1) / this.workout.blocks.length * 100
+  }
+  get currentRepetitionPCT() {
+    return (this.progress.repetition + 1) / this.workout.blocks[this.progress.block].repetitions * 100
+  }
+  get currentExercisePCT() {
+    return this.currentExercise / this.workout.blocks[this.progress.block].steps.filter(step => step.type === 'exercise').length * 100
+  }
 
   get totalTime() {
     return this.workout.blocks
@@ -174,6 +188,7 @@ export default class Workout extends Vue {
     width: 100%;
     display: flex;
     flex-direction: row;
+    margin: center;
 
     >div {
       flex-grow: 1;
@@ -181,6 +196,14 @@ export default class Workout extends Vue {
 
     p {
       margin: 0;
+    }
+
+    .time {
+      align-self: center;
+    }
+
+    .v-progress-linear__content {
+      padding: 5px;
     }
   }
 

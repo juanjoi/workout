@@ -2,9 +2,11 @@
   <div class="timer-block">
     <h2>{{ timer.title }}</h2>
     <h1>{{ formatTime }}</h1>
-    <button @click="start">Restart</button>
-    <button @click="pauseInterval">Pause</button>
-    <button @click="triggerInterval">Continue</button>
+    <v-toolbar class="toolbar">
+      <v-btn @click="start" icon="mdi-refresh"></v-btn>
+      <v-btn @click="pauseInterval" icon="mdi-pause"></v-btn>
+      <v-btn @click="triggerInterval" icon="mdi-play"></v-btn>
+    </v-toolbar>
   </div>
 </template>
 <script lang="ts">
@@ -108,4 +110,8 @@ export default class Timer extends Vue {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style></style>
+<style>
+.toolbar {
+  width: 100%;
+}
+</style>
